@@ -14,6 +14,7 @@
 | 당근 픽셀 | `''` (꺼짐) | `1785978728314816001` |
 | GA4 | `''` | GTM 내부에서 연결 |
 | `<noscript>` 폴백 픽셀 | 제거됨 | GTM iframe + Meta img |
+| 검색 색인 | `noindex, nofollow` (차단) | 태그 없음 |
 
 로더는 전부 ID 값으로 게이트되어 있어(`if(!w.KARROT_ID) return;`, `!!window.META_PIXEL_ID`)
 ID를 비우면 스크립트 자체가 로드되지 않습니다. 실제 브라우저(390x844)로 확인한 결과
