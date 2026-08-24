@@ -751,6 +751,9 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
   /* 프리롤이 첫 화면을 이미 담당하므로 본문 히어로("왜 이렇게 복잡해야 할까요?")는 건너뜀.
      프리롤 → 히어로로 이어지면 같은 사람에게 도입부를 두 번 보여주게 됨.
      ?skiphero=0 으로 끄고 ?skiphero=1 로 강제 (실기기 확인용) */
+  /* 데모 전환 바: 실전 노출 금지. ?demo=1 일 때만 표시 (캠페인 전환 테스트용) */
+  window.DEMO_BAR = q.get('demo') === '1';
+
   var qSkipHero = q.get('skiphero');
   window.SKIP_HERO = qSkipHero === '0' ? false
                    : qSkipHero === '1' ? true
@@ -917,7 +920,8 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
     function hold(el, delay){ el.style.animationDelay = delay; el.style.animationPlayState = 'paused'; held.push(el); }
     function release(){ held.forEach(function(el){ el.style.animationPlayState = 'running'; }); }
 
-    /* ---------- 데모 전환 바 (예시 전용) ---------- */
+    /* ---------- 데모 전환 바 (?demo=1 일 때만) ---------- */
+    if(window.DEMO_BAR){
     var bar = document.createElement('nav');
     bar.className = 'demo-bar';
     [['s25fe','S25 FE'],['daran','대란'],['preorder','사전예약'],['off','기본']].forEach(function(it){
@@ -937,6 +941,7 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
       });
     }
     document.body.appendChild(bar2);
+    }
 
     /* ---------- 이벤트 노출: 상단 고정 띠 ---------- */
     if(promo && pstyle === 'ticker'){
