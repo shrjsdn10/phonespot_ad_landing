@@ -107,6 +107,14 @@ body{
 .promo-pill .pp-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:ppPulse 1.8s ease-in-out infinite;flex:none;margin-right:-1px}
 .promo-pill .pp-go{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800}
 @keyframes ppPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.72)}}
+/* 광고 유입으로 히어로를 건너뛴 경우 — '다시 보기'를 화면 상단에 고정 */
+.promo-pill.pp-fixed{
+  position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));z-index:44;white-space:nowrap;
+  transform:translateX(-50%) translateY(10px);
+  animation:ppFixedIn .7s var(--ease) 1.15s forwards;
+}
+@keyframes ppFixedIn{to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.promo-pill.pp-fixed.pp-hide{opacity:0;pointer-events:none;transition:opacity .3s ease}
 /* 진행 중 이벤트 — 상단 고정 띠 */
 .promo-ticker{
   position:fixed;left:0;right:0;top:0;z-index:60;
@@ -740,6 +748,14 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
   var heroCamp = (camp && mode === 'hero') ? camp : ((promo && pstyle === 'takeover') ? promoCamp : null);
   var rollCamp = (camp && mode === 'preroll') ? camp : ((promo && pstyle === 'preroll') ? promoCamp : null);
 
+  /* 프리롤이 첫 화면을 이미 담당하므로 본문 히어로("왜 이렇게 복잡해야 할까요?")는 건너뜀.
+     프리롤 → 히어로로 이어지면 같은 사람에게 도입부를 두 번 보여주게 됨.
+     ?skiphero=0 으로 끄고 ?skiphero=1 로 강제 (실기기 확인용) */
+  var qSkipHero = q.get('skiphero');
+  window.SKIP_HERO = qSkipHero === '0' ? false
+                   : qSkipHero === '1' ? true
+                   : !!rollCamp;
+
   /* 유입 이벤트 (GTM dataLayer) */
   window.dataLayer = window.dataLayer || [];
   if(camp) window.dataLayer.push({event:'campaign_view', campaign:key, mode:mode});
@@ -960,8 +976,19 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
         e.preventDefault(); e.stopPropagation();
         if(window.__adRoll) window.__adRoll.restore();
       });
-      hero.appendChild(r);
-      hold(r, '1.15s');
+      if(window.SKIP_HERO){
+        /* 히어로를 건너뛰므로 배지가 갈 곳이 없음 → 화면 상단에 고정.
+           맨 위를 벗어나면 숨김. vMode에서는 scroll 이벤트가 안 오므로 폴링 */
+        r.className = 'promo-pill pp-fixed';
+        document.body.appendChild(r);
+        setInterval(function(){
+          var y = (window.__vY !== undefined) ? window.__vY : (window.scrollY || 0);
+          r.classList.toggle('pp-hide', y > innerHeight * 0.5);
+        }, 300);
+      } else {
+        hero.appendChild(r);
+        hold(r, '1.15s');
+      }
     }
     /* ---------- 이벤트 노출: 헤드라인 아래 배지 ---------- */
     else if(promo && pstyle === 'badge' && hero){
@@ -1153,6 +1180,15 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
     rows:[].slice.call($('s1_result').querySelectorAll('.drow')),
     cardEls:[], cur:0, heroCur:0
   };
+
+  /* 광고 유입: 히어로 구간(P 0~0.30)을 통째로 제거하고 그만큼 스크롤 길이도 줄임.
+     숨기기만 하면 90svh(데스크톱)/168svh(모바일)의 빈 스크롤이 남음. */
+  var SKIP_HERO = !!window.SKIP_HERO;
+  if(SKIP_HERO){
+    s1.hero.style.display = 'none';
+    s1.intro2.style.display = 'none';
+    s1.wrap.style.height = '210svh';        // 데스크톱 300svh의 70%
+  }
   var seen={kko:0,tgm:0,cf2:0,bnd:0,brd:0,sheet:0};
   CARDS.forEach(function(c,i){
     var el=document.createElement('div');
@@ -1166,18 +1202,23 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
   });
 
   function renderS1(P, HP, skew){
-    var hp = 1 - seg(HP, 0.035, 0.115);
-    s1.hero.style.opacity = hp.toFixed(3);
-    s1.hero.style.transform = 'translateY('+(-(1-hp)*28).toFixed(1)+'px) scale('+(1-(1-hp)*0.03).toFixed(3)+')';
-    s1.hero.style.pointerEvents = hp>0.5?'auto':'none';
+    var hp = 0;                              // 히어로 잔여 불투명도 (건너뛰면 0)
+    if(!SKIP_HERO){
+      hp = 1 - seg(HP, 0.035, 0.115);
+      s1.hero.style.opacity = hp.toFixed(3);
+      s1.hero.style.transform = 'translateY('+(-(1-hp)*28).toFixed(1)+'px) scale('+(1-(1-hp)*0.03).toFixed(3)+')';
+      s1.hero.style.pointerEvents = hp>0.5?'auto':'none';
 
-    var i2out = 1-seg(P,0.25,0.31);
-    s1.intro2.style.opacity = i2out.toFixed(3);
-    s1.i2a.style.opacity = seg(P,0.13,0.175).toFixed(3);
-    s1.i2b.style.opacity = seg(P,0.185,0.235).toFixed(3);
-    s1.intro2.style.transform = 'translateY(calc(-50% + '+((1-outC(seg(P,0.13,0.22)))*16).toFixed(1)+'px))';
+      var i2out = 1-seg(P,0.25,0.31);
+      s1.intro2.style.opacity = i2out.toFixed(3);
+      s1.i2a.style.opacity = seg(P,0.13,0.175).toFixed(3);
+      s1.i2b.style.opacity = seg(P,0.185,0.235).toFixed(3);
+      s1.intro2.style.transform = 'translateY(calc(-50% + '+((1-outC(seg(P,0.13,0.22)))*16).toFixed(1)+'px))';
+    }
 
-    var p = seg(P, 0.30, 1);
+    /* 히어로를 걷어내면 p=0(아무것도 안 보이는 구간)이 그대로 노출됨.
+       카드가 이미 날아들어오는 지점에서 시작해 첫 화면이 비지 않게 함 */
+    var p = SKIP_HERO ? (0.12 + P*0.88) : seg(P, 0.30, 1);
 
     var ha = seg(p,0.36,0.43) * (1-seg(p,0.58,0.65));
     s1.headA.style.opacity = ha;
@@ -1631,7 +1672,7 @@ window.META_PIXEL_ID = '';    /* 작업본: 비활성 (라이브 = 1387430733300
 
   var coarse = matchMedia('(pointer: coarse)').matches;
   if(coarse){
-    s1.wrap.style.height='560svh';
+    s1.wrap.style.height = SKIP_HERO ? '392svh' : '560svh';   // 560의 70%
     s2.wrap.style.height='400svh';
     s2b.wrap.style.height='400svh';
     s3.wrap.style.height='560svh';
