@@ -649,12 +649,17 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
     var p1 = acts[0].p, p2 = acts[1].p, p3 = acts[2].p,
         p4 = acts[3].p, p5 = acts[4].p;
 
-    /* ── S1: 조각이 깊이별로 흘러가며 흐려짐 ── */
+    /* ── S1: 조각이 깊이별로 흘러가며 흐려짐 ──
+       구간을 늘리면 같은 애니메이션이 더 긴 스크롤에 퍼져 저절로 느려진다.
+       이동 거리를 구간 길이에 비례시켜, 스크롤 대비 속도는 원래대로 두고
+       '더 멀리 흘러가게'만 만든다. (기준: 160svh = 스크롤 0.6화면) */
+    var s1Travel  = Math.max(1, acts[0].h - vh);
+    var driftScale = s1Travel / (vh * 0.6);
     for(var i=0;i<fragEls.length;i++){
       var f = FRAGS[i];
       var appear = outC(seg(p1, 0.02 + f.d*0.07, 0.20 + f.d*0.16));
-      var drift  = p1 * (26 + f.d*78);
-      var away   = seg(p1, 0.80, 1);
+      var drift  = p1 * (34 + f.d*104) * driftScale;
+      var away   = seg(p1, 0.62, 1);
       var sc     = (f.s||1) * (1 - away*0.14);
       fragEls[i].style.transform =
         'translate3d(0,'+(-drift).toFixed(1)+'px,0) rotate('+f.r+'deg) scale('+sc.toFixed(3)+')';
