@@ -662,16 +662,18 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
       fragEls[i].style.filter  = 'blur('+((1-f.d)*2.4 + away*3.2).toFixed(2)+'px)';
     }
 
-    /* ── S2: 조각은 빠지고 가격 패널이 올라옴 ── */
-    var pIn = outC(seg(p2, 0.20, 0.52));
+    /* ── S2: 조각은 빠지고 가격 패널이 올라옴 ──
+       장면에 들어서는 순간부터 패널이 떠 있고, 남은 구간 내내 유지된다.
+       (예전엔 0.20~0.52에 올라와서 장면 초반이 비어 보였음) */
+    var pIn = outC(seg(p2, 0.02, 0.24));
     s2p.style.opacity = pIn.toFixed(3);
-    s2p.style.transform = 'translate(-50%,-50%) translateY('+((1-pIn)*46).toFixed(1)+'px) scale('+(0.94+0.06*pIn).toFixed(3)+')';
-    var hIn = outC(seg(p2, 0.04, 0.26));
+    s2p.style.transform = 'translate(-50%,-50%) translateY('+((1-pIn)*30).toFixed(1)+'px) scale('+(0.96+0.04*pIn).toFixed(3)+')';
+    var hIn = outC(seg(p2, 0.00, 0.16));
     s2h.style.opacity = hIn.toFixed(3);
     s2h.style.transform = 'translateY('+((1-hIn)*18).toFixed(1)+'px)';
     var rows = s2p.querySelectorAll('.prow');
     for(var k=0;k<rows.length;k++){
-      var rr = outC(seg(p2, 0.34+k*0.055, 0.52+k*0.055));
+      var rr = outC(seg(p2, 0.10+k*0.05, 0.28+k*0.05));
       rows[k].style.opacity = rr.toFixed(3);
       rows[k].style.transform = 'translateY('+((1-rr)*12).toFixed(1)+'px)';
     }
