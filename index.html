@@ -149,33 +149,33 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
 }
 /* 조각 — 성지 시세표 */
 .sheet{
-  width:172px;border-radius:5px;overflow:hidden;
+  width:198px;border-radius:6px;overflow:hidden;
   background:#221B16;
   border:1px solid rgba(167,154,147,.14);
   box-shadow:0 22px 50px rgba(0,0,0,.55);
 }
 .sheet-hd{
-  font-size:8px;font-weight:800;letter-spacing:-.01em;color:#C3D2E6;
-  padding:5px 7px;background:#2E2620;border-bottom:1px solid rgba(167,154,147,.14);
+  font-size:9.5px;font-weight:800;letter-spacing:-.01em;color:#D8C8BC;
+  padding:6px 8px;background:#2E2620;border-bottom:1px solid rgba(167,154,147,.14);
 }
 .sheet-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:rgba(167,154,147,.1);padding:1px}
 .sheet-grid span{
   background:#1B1613;color:#A4968E;
-  font-size:7.5px;font-weight:600;text-align:center;padding:3.5px 0;
+  font-size:9px;font-weight:600;text-align:center;padding:4.5px 0;
   font-variant-numeric:tabular-nums;
 }
 .sheet-grid span.h{background:#26201B;color:#847870;font-weight:700}
 .sheet-grid span.a{color:#E0885E}
 /* 조각 — 대화 캡처 */
 .chat{
-  width:158px;border-radius:9px;padding:9px 10px 11px;
+  width:176px;border-radius:10px;padding:10px 11px 12px;
   background:#1A1512;border:1px solid rgba(167,154,147,.13);
   box-shadow:0 20px 44px rgba(0,0,0,.5);
   display:flex;flex-direction:column;gap:6px;
 }
-.chat b{font-size:8.5px;font-weight:700;color:#AFA098;letter-spacing:-.01em}
+.chat b{font-size:9.5px;font-weight:700;color:#BCAB9F;letter-spacing:-.01em}
 .chat em{
-  font-style:normal;font-size:8.5px;font-weight:600;color:#918379;
+  font-style:normal;font-size:9.5px;font-weight:600;color:#9D8E83;
   background:#26201B;border-radius:7px;padding:4px 7px;align-self:flex-start;
   letter-spacing:-.02em;
 }
@@ -436,7 +436,7 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
 <main id="top">
 
   <!-- ═══ S1 혼란 ═══ -->
-  <section class="act" id="s1" style="height:160svh">
+  <section class="act" id="s1" style="height:230svh">
     <div class="pin">
       <div class="stage" id="s1_stage"></div>
       <div class="veil"></div>
@@ -653,13 +653,13 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
     for(var i=0;i<fragEls.length;i++){
       var f = FRAGS[i];
       var appear = outC(seg(p1, 0.02 + f.d*0.07, 0.20 + f.d*0.16));
-      var drift  = p1 * (34 + f.d*104);
-      var away   = seg(p1, 0.62, 1);
+      var drift  = p1 * (26 + f.d*78);
+      var away   = seg(p1, 0.80, 1);
       var sc     = (f.s||1) * (1 - away*0.14);
       fragEls[i].style.transform =
         'translate3d(0,'+(-drift).toFixed(1)+'px,0) rotate('+f.r+'deg) scale('+sc.toFixed(3)+')';
-      fragEls[i].style.opacity = (appear * (1 - away*0.85) * (0.30 + f.d*0.5)).toFixed(3);
-      fragEls[i].style.filter  = 'blur('+((1-f.d)*2.4 + away*3.2).toFixed(2)+'px)';
+      fragEls[i].style.opacity = (appear * (1 - away*0.9) * (0.48 + f.d*0.44)).toFixed(3);
+      fragEls[i].style.filter  = 'blur('+((1-f.d)*1.4 + away*3.4).toFixed(2)+'px)';
     }
 
     /* ── S2: 조각은 빠지고 가격 패널이 올라옴 ──
