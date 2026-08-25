@@ -24,6 +24,16 @@ ID를 비우면 스크립트 자체가 로드되지 않습니다. 실제 브라�
 
 시세 API(`PRICE_API`)는 페이지 렌더에 필요하므로 그대로 두었습니다.
 
+## 파일 구성
+
+| 파일 | 내용 |
+|---|---|
+| `index.html` | **시네마틱 6장면 스크롤 랜딩** — GitHub Pages 루트 |
+| `ad.html` | 광고 캠페인 랜딩 (프리롤 + `?c=` 프리셋) |
+
+`ad.html` 은 광고 유입 시 본문 히어로를 건너뛰며, `?c=s25fe` / `?c=daran` /
+`?c=preorder` 프리셋과 `?skiphero=0`, `?demo=1` 스위치를 지원한다.
+
 ## 배포 위치
 
 - 본 랜딩 (라이브): `phonespot86/phonespot_landing`
