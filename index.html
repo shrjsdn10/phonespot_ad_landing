@@ -141,7 +141,9 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
 #s1 .stage{
   background:
     radial-gradient(120% 80% at 50% 8%, #231C16 0%, #14100D 46%, #0A0705 100%);
+  animation:stageIn 1s var(--ease) .08s both;
 }
+@keyframes stageIn{from{opacity:0}to{opacity:1}}
 .frag{
   position:absolute;
   transform-origin:center;
@@ -378,6 +380,8 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
 }
 #s6 h2{color:#171210;font-size:clamp(31px,8.8vw,46px);line-height:1.22}
 #s6 h2 b{color:var(--accent-deep);font-weight:800}
+/* '휴대폰 구매,' 와 나머지 사이를 한 줄 띄움 (글자 크기에 비례) */
+#s6 h2 .lead{display:block;margin-bottom:.62em}
 #s6 .brandline{
   margin-top:18px;display:flex;align-items:center;gap:9px;
   font-size:13px;font-weight:600;color:#7A6C64;letter-spacing:-.02em;
@@ -436,7 +440,7 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
 <main id="top">
 
   <!-- ═══ S1 혼란 ═══ -->
-  <section class="act" id="s1" style="height:330svh">
+  <section class="act" id="s1" style="height:280svh">
     <div class="pin">
       <div class="stage" id="s1_stage"></div>
       <div class="veil"></div>
@@ -518,7 +522,7 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
   <section class="act" id="s6" style="height:100svh">
     <div class="pin">
       <div class="inner">
-        <h2>휴대폰 구매,<br>이제<br><b>가격부터</b><br>확인하세요.</h2>
+        <h2><span class="lead">휴대폰 구매,</span>이제<br><b>가격부터</b><br>확인하세요.</h2>
         <p class="brandline"><i></i>내 손안의 휴대폰 성지</p>
         <div class="cta-wrap">
           <a class="cta" href="https://citymall.co.kr/pb" target="_blank" rel="noopener">내 휴대폰 가격 확인하기</a>
@@ -657,7 +661,10 @@ body.menu-open .menu{opacity:1;visibility:visible;transition:opacity .38s ease}
     var driftScale = s1Travel / (vh * 0.6);
     for(var i=0;i<fragEls.length;i++){
       var f = FRAGS[i];
-      var appear = outC(seg(p1, 0.02 + f.d*0.07, 0.20 + f.d*0.16));
+      /* 등장은 스크롤과 무관 — 페이지가 열리는 순간부터 시세표가 보인다.
+         (예전엔 스크롤 진행률로 페이드인해서 첫 화면이 비어 있었음)
+         부드러운 진입은 #s1_stage 의 CSS 페이드가 담당 */
+      var appear = 1;
       var drift  = p1 * (34 + f.d*104) * driftScale;
       var away   = seg(p1, 0.62, 1);
       var sc     = (f.s||1) * (1 - away*0.14);
